@@ -32,7 +32,7 @@ def start(message):
 
 @bot.message_handler(commands=['debug'])
 def send_logs(message):
-    with open("../logs.txt", "rb") as f:
+    with open("/logs.txt", "rb") as f:
         bot.send_document(message.chat.id, f)
 
 @bot.message_handler(commands=['help'])
