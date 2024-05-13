@@ -13,12 +13,7 @@ bot = telebot.TeleBot(get_bot_token())
 
 
 
-logging.basicConfig(
-    filename=LOGS,
-    datefmt="%Y-%m-%d %H:%M",
-    level=logging.ERROR,
-    format="%(asctime)s FILE: %(filename)s IN: %(funcName)s MESSAGE: %(message)s",
-    filemode="w")
+
 
 
 
