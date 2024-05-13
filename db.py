@@ -1,5 +1,5 @@
 import sqlite3
-from config import TABLE_NAME, DB_NAME, DB_FILE
+from config import TABLE_NAME, DB_NAME, LOGS, DB_FILE
 import logging  # модуль для сбора логов
 
 
@@ -121,7 +121,8 @@ def prepare_db():
 
 
 # настраиваем запись логов в файл
-
+logging.basicConfig(filename=LOGS, level=logging.ERROR,
+                    format="%(asctime)s FILE: %(filename)s IN: %(funcName)s MESSAGE: %(message)s", filemode="w")
 path_to_db = DB_FILE  # файл базы данных
 
 # создаём базу данных и таблицу messages

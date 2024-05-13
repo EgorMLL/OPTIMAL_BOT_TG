@@ -1,12 +1,12 @@
 import logging
 import math
-from config import MAX_USERS, MAX_USER_GPT_TOKENS, MAX_USER_TTS_SYMBOLS, MAX_TTS_SYMBOLS, MAX_USER_STT_BLOCKS
+from config import LOGS, MAX_USERS, MAX_USER_GPT_TOKENS, MAX_USER_TTS_SYMBOLS, MAX_TTS_SYMBOLS, MAX_USER_STT_BLOCKS
 from db import count_users, count_all_symbol, count_all_blocks
 from yandex_gpt import count_gpt_tokens
 
 
 # настраиваем запись логов в файл
-
+logging.basicConfig(filename=LOGS, level=logging.ERROR, format="%(asctime)s FILE: %(filename)s IN: %(funcName)s MESSAGE: %(message)s", filemode="w")
 
 
 # получаем количество уникальных пользователей, кроме самого пользователя
