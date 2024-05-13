@@ -6,7 +6,7 @@ import logging  # модуль для сбора логов
 
 
 
-con = sqlite3.connect('db.sqlite', check_same_thread=False)
+con = sqlite3.connect('../db.sqlite', check_same_thread=False)
 cur = con.cursor()
 
 
