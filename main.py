@@ -1,11 +1,11 @@
-from bot.creds import get_bot_token
-from bot.validators import *
-from bot.config import TOKEN, MAX_TTS_SYMBOLS, MAX_USER_TTS_SYMBOLS, LOGS, COUNT_LAST_MSG
+from creds import get_bot_token
+from validators import *
+from config import TOKEN, MAX_TTS_SYMBOLS, MAX_USER_TTS_SYMBOLS, LOGS, COUNT_LAST_MSG
 import telebot
-from bot.db import prepare_db, insert_row, count_all_symbol, insert_row_stt, create_database, add_message, select_n_last_messages
-from bot.speechkit import text_to_speech, speech_to_text
+from db import prepare_db, insert_row, count_all_symbol, insert_row_stt, create_database, add_message, select_n_last_messages
+from speechkit import text_to_speech, speech_to_text
 from telebot.types import ReplyKeyboardMarkup
-from bot.yandex_gpt import ask_gpt
+from yandex_gpt import ask_gpt
 
 
 API_TOKEN = TOKEN

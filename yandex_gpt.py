@@ -1,8 +1,8 @@
 import requests
 import logging  # модуль для сбора логов
 # подтягиваем константы из config файла
-from bot.config import LOGS, MAX_GPT_TOKENS, SYSTEM_PROMPT
-from bot.creds import get_creds  # модуль для получения токенов
+from config import LOGS, MAX_GPT_TOKENS, SYSTEM_PROMPT
+from creds import get_creds  # модуль для получения токенов
 
 iam_token, folder_id = get_creds()
 # настраиваем запись логов в файл

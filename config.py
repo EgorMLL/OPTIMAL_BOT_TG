@@ -32,7 +32,7 @@ SYSTEM_PROMPT = [{'role': 'system', 'text': 'Ты веселый собесед�
                                             'Изображай человека'}]  # список с системным промтом
 
 
-HOME_DIR = '/Users/Egor/PycharmProjects/OPTIMAL_BOT'  # путь к папке с проектом
+HOME_DIR = '/home/student/OPTIMAL_BOT'  # путь к папке с проектом
 LOGS = f'{HOME_DIR}/logs.txt'  # файл для логов
 DB_FILE = f'{HOME_DIR}/messages.db'  # файл для базы данных
 

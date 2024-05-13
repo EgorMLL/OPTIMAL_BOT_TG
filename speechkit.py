@@ -1,6 +1,6 @@
-from bot.config import RESPONCE, RESPONCE_STT
+from config import RESPONCE, RESPONCE_STT
 import requests
-from bot.creds import get_creds  # модуль для получения токенов
+from creds import get_creds  # модуль для получения токенов
 
 iam_token, folder_id = get_creds()  # получаем iam_token и folder_id из файлов\
 
