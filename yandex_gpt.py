@@ -1,12 +1,12 @@
 import requests
 import logging  # модуль для сбора логов
 # подтягиваем константы из config файла
-from config import LOGS, MAX_GPT_TOKENS, SYSTEM_PROMPT
+from config import MAX_GPT_TOKENS, SYSTEM_PROMPT
 from creds import get_creds  # модуль для получения токенов
 
 iam_token, folder_id = get_creds()
 # настраиваем запись логов в файл
-logging.basicConfig(filename=LOGS, level=logging.ERROR, format="%(asctime)s FILE: %(filename)s IN: %(funcName)s MESSAGE: %(message)s", filemode="w")
+
 
 # подсчитываем количество токенов в сообщениях
 def count_gpt_tokens(messages):
