@@ -4,11 +4,10 @@ import time  # модуль для работы со временем
 from datetime import datetime  # модуль для работы с датой и временем
 import requests
 # подтягиваем константы из config-файла
-from config import LOGS, IAM_TOKEN_PATH, FOLDER_ID_PATH, BOT_TOKEN_PATH
+from config import IAM_TOKEN_PATH, FOLDER_ID_PATH, BOT_TOKEN_PATH
 
 # настраиваем запись логов в файл
-logging.basicConfig(filename=LOGS, level=logging.INFO,
-                    format="%(asctime)s FILE: %(filename)s IN: %(funcName)s MESSAGE: %(message)s", filemode="w")
+
 
 # получение нового iam_token
 def create_new_token():
