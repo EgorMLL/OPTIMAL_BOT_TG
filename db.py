@@ -6,8 +6,8 @@ import logging  # модуль для сбора логов
 
 
 
-con = sqlite3.connect('db.sqlite', check_same_thread=False)
-cur = con.cursor()
+with sqlite3.connect(DB_NAME) as con:
+    cur = con.cursor()
 
 
 def execute_selection_query(sql_query, data=None, db_path=DB_NAME):
