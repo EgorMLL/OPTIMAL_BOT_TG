@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 User=student
-Group=student
+Group=root
 Type=simple
 Restart=always
 ExecStart=/usr/bin/python3 /home/student/OPTIMAL_BOT_TG/main.py
