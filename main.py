@@ -41,9 +41,9 @@ def send_logs(message):
 
 @bot.message_handler(commands=['help'])
 def help(message):
-    bot.send_message(message.from_user.id, "/debug - откладка об ошибках"
-                                           "/tts - перевод текста в аудио"
-                                           "/stt - перевод аудио в текст"
+    bot.send_message(message.from_user.id, "/debug - откладка об ошибках\n"
+                                           "/tts - перевод текста в аудио\n"
+                                           "/stt - перевод аудио в текст\n"
                                            "/start - начало общения с ботом")
 
 @bot.message_handler(commands=['tts'])
