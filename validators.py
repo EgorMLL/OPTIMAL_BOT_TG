@@ -29,7 +29,7 @@ def is_gpt_token_limit(messages, total_spent_tokens):
 def is_stt_block_limit(user_id, duration):
 
     audio_blocks = math.ceil(duration / 15)
-    all_blocks = count_all_blocks(user_id) + audio_blocks
+    all_blocks = count_all_blocks(user_id)[0] + audio_blocks
 
     if duration >= 30:
         msg = "SpeechKit STT работает с голосовыми сообщениями меньше 30 секунд"
@@ -47,7 +47,7 @@ def is_tts_symbol_limit(user_id, text):
     text_symbols = len(text)
 
     # Функция из БД для подсчёта всех потраченных пользователем символов
-    all_symbols = count_all_symbol(user_id) + text_symbols
+    all_symbols = count_all_symbol(user_id)[0] + text_symbols
 
     # Сравниваем all_symbols с количеством доступных пользователю символов
     if all_symbols >= MAX_USER_TTS_SYMBOLS:
