@@ -99,7 +99,7 @@ def count_all_symbol(user_id):
             return 0
     except Exception as e:
         logging.error(e)  # если ошибка - записываем её в логи
-        return None
+        return None, 1
 
 def count_all_blocks(user_id):
     try:
