@@ -162,10 +162,9 @@ def handle_voice(message):
         total_gpt_tokens += tokens_in_answer
 
     # Проверка на лимит символов для SpeechKit
-        tts_symbols = is_tts_symbol_limit(user_id, answer_gpt)
 
     # Запись ответа GPT в БД
-        add_message(user_id=user_id, full_message=[answer_gpt, 'assistant', total_gpt_tokens, tts_symbols, 0])
+        add_message(user_id=user_id, full_message=[answer_gpt, 'assistant', total_gpt_tokens, 0, 0])
 
         if error_message:
             bot.send_message(user_id, error_message)
@@ -177,6 +176,8 @@ def handle_voice(message):
             bot.send_voice(user_id, voice_response, reply_to_message_id=message.id)
         else:
             bot.send_message(user_id, answer_gpt, reply_to_message_id=message.id)
+
+
 
 
 
