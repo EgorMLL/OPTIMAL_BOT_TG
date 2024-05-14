@@ -5,11 +5,6 @@ import logging  # модуль для сбора логов
 
 
 
-
-with sqlite3.connect(DB_NAME) as con:
-    cur = con.cursor()
-
-
 def execute_selection_query(sql_query, data=None, db_path=DB_NAME):
     try:
         connection = sqlite3.connect(db_path)
@@ -28,7 +23,9 @@ def execute_selection_query(sql_query, data=None, db_path=DB_NAME):
 
 def create_table(TABLE_NAME):
     try:
-        sql_query = f'''
+        with sqlite3.connect(DB_NAME) as con:
+            cur = con.cursor()
+            sql_query = f'''
                 CREATE TABLE IF NOT EXISTS {TABLE_NAME} 
                 (id INTEGER PRIMARY KEY,
                 user_id INTEGER,
@@ -36,19 +33,21 @@ def create_table(TABLE_NAME):
                 tts_symbols INTEGER,
                 stt_blocks INTEGER)
             '''
-        cur.execute(sql_query)
+            cur.execute(sql_query)
     except Exception as e:
         logging.error(e)
         return None
 
 def insert_row_stt(user_id, message, stt_symbols, table_name=f'{TABLE_NAME}'):
     try:
-        cur.execute(f'''
-        INSERT INTO {table_name}
-        (user_id, text, stt_blocks)
-        VALUES (?, ?, ?)
-         ''', (user_id, message, stt_symbols))
-        con.commit()
+        with sqlite3.connect(DB_NAME) as con:
+            cur = con.cursor()
+            cur.execute(f'''
+            INSERT INTO {table_name}
+            (user_id, text, stt_blocks)
+            VALUES (?, ?, ?)
+            ''', (user_id, message, stt_symbols))
+            con.commit()
     except Exception as e:
         logging.error(e)
         return None
@@ -56,12 +55,14 @@ def insert_row_stt(user_id, message, stt_symbols, table_name=f'{TABLE_NAME}'):
 
 def insert_row(user_id, message, tts_symbols, table_name=f'{TABLE_NAME}'):
     try:
-        cur.execute(f'''
-        INSERT INTO {table_name}
-        (user_id, text, tts_symbols)
-        VALUES (?, ?, ?)
-        ''', (user_id, message, tts_symbols))
-        con.commit()
+        with sqlite3.connect(DB_NAME) as con:
+            cur = con.cursor()
+            cur.execute(f'''
+            INSERT INTO {table_name}
+            (user_id, text, tts_symbols)
+            VALUES (?, ?, ?)
+            ''', (user_id, message, tts_symbols))
+            con.commit()
     except Exception as e:
         logging.error(e)
         return None
@@ -69,35 +70,41 @@ def insert_row(user_id, message, tts_symbols, table_name=f'{TABLE_NAME}'):
 
 def insert_user_id(user_id, message, table_name=f'{TABLE_NAME}'):
     try:
-        cur.execute(f'''
-        INSERT INTO {table_name}
-        (user_id, text)
-        VALUES (?, ?)''',
-        (user_id, message))
-        con.commit()
+        with sqlite3.connect(DB_NAME) as con:
+            cur = con.cursor()
+            cur.execute(f'''
+            INSERT INTO {table_name}
+            (user_id, text)
+            VALUES (?, ?)''',
+            (user_id, message))
+            con.commit()
     except Exception as e:
         logging.error(e)
         return None
 
 def count_all_symbol(user_id):
     try:
-        sql_query = f'''
-        SELECT SUM(tts_symbols)
-        FROM {TABLE_NAME}
-        WHERE user_id = {user_id}
-        GROUP BY user_id
-        '''
-        data = execute_selection_query(sql_query)
+        with sqlite3.connect(DB_NAME) as con:
+            cur = con.cursor()
+            sql_query = f'''
+            SELECT SUM(tts_symbols)
+            FROM {TABLE_NAME}
+            WHERE user_id = {user_id}
+            GROUP BY user_id
+            '''
+            data = execute_selection_query(sql_query)
 
-        if data:
-            return data[0]
-        return 0
+            if data:
+                return data[0]
+            return 0
     except Exception as e:
         logging.error(e)  # если ошибка - записываем её в логи
         return None
 
 def count_all_blocks(user_id):
     try:
+        with sqlite3.connect(DB_NAME) as con:
+            cur = con.cursor()
         # подключаемся к базе данных
             sql_query = f'''
             SELECT SUM(stt_blocks) 
