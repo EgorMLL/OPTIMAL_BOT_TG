@@ -27,7 +27,11 @@ markup = ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message.chat.id, 'Привет! Я бот, который переводит текст в голосовое сообщение! Попробуй меня, введя команду /tts')
+    bot.send_message(message.chat.id, 'Привет! Я бот, который поможет тебе с любым вопросом! \n'
+                                      'Если ты введёшь текстовый запрос - я тебе отвечу текстом.\n'
+                                      'Если ты запишешь голосовое сообщение - я отвечу голосом!\n'
+                                      'Так же ты можешь проверить мои способности перевода текста в аудио и наоборот по командам /tts и /stt\n'
+                                      'Комманда /help - ознакомление с остальными моими коммандами')
 
 
 @bot.message_handler(commands=['debug'])
@@ -37,7 +41,10 @@ def send_logs(message):
 
 @bot.message_handler(commands=['help'])
 def help(message):
-    bot.send_message(message.from_user.id, "Чтобы приступить к общению, отправь мне голосовое сообщение или текст")
+    bot.send_message(message.from_user.id, "/debug - откладка об ошибках"
+                                           "/tts - перевод текста в аудио"
+                                           "/stt - перевод аудио в текст"
+                                           "/start - начало общения с ботом")
 
 @bot.message_handler(commands=['tts'])
 def tts_handler(message):
