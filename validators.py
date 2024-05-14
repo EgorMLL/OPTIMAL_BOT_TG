@@ -29,7 +29,7 @@ def is_gpt_token_limit(messages, total_spent_tokens):
 def is_stt_block_limit(user_id, duration):
 
     audio_blocks = math.ceil(duration / 15)
-    all_blocks = count_all_blocks(user_id)[0] + audio_blocks
+    all_blocks = count_all_blocks(user_id) + audio_blocks
 
     if duration >= 30:
         msg = "SpeechKit STT работает с голосовыми сообщениями меньше 30 секунд"
