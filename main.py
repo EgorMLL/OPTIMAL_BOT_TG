@@ -73,7 +73,7 @@ def tts(message):
         bot.register_next_step_handler(message, tts)
         return
 
-    if count_all_symbol(message.chat.id)[0] >= MAX_USER_TTS_SYMBOLS:
+    if count_all_symbol(message.chat.id) >= MAX_USER_TTS_SYMBOLS:
         msg = f"Превышен лимит токенов на пользователя в сумме {MAX_TTS_SYMBOLS} символов! Вы больше не сможете отправлять текст."
         bot.send_message(message.chat.id, msg)
         logging.info("У пользоваеля превышен общий лимит символов.")
