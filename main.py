@@ -99,13 +99,7 @@ def tts(message):
 def stt(message):
     user_id = message.from_user.id
 
-
     if not message.voice:
-        return
-
-
-    stt_blocks = is_stt_block_limit(message, message.voice.duration)
-    if not stt_blocks:
         return
 
     file_id = message.voice.file_id
@@ -118,7 +112,7 @@ def stt(message):
     # Если статус True - отправляем текст сообщения и сохраняем в БД, иначе - сообщение об ошибке
     if status:
         # Записываем сообщение и кол-во аудиоблоков в БД
-        insert_row_stt(user_id, text, stt_blocks)
+        insert_row_stt(user_id, text, 1)
         bot.send_message(user_id, text, reply_to_message_id=message.id)
     else:
         bot.send_message(user_id, text)
@@ -126,6 +120,7 @@ def stt(message):
 
 # Декоратор для обработки голосовых сообщений, полученных ботом
 # Декоратор для обработки голосовых сообщений, полученных ботом
+
 @bot.message_handler(content_types=['voice'])
 def handle_voice(message):
 
@@ -138,10 +133,7 @@ def handle_voice(message):
             return
 
     # Проверка на доступность аудиоблоков
-        stt_blocks = is_stt_block_limit(message.from_user.id, message.voice.duration)
-        if error_message:
-            bot.send_message(user_id, error_message)
-            return
+
 
     # Обработка голосового сообщения
         file_id = message.voice.file_id
@@ -153,7 +145,7 @@ def handle_voice(message):
             return
 
     # Запись в БД
-        add_message(user_id=user_id, full_message=[stt_text, 'user', 0, 0, stt_blocks])
+        add_message(user_id=user_id, full_message=[stt_text, 'user', 0, 0, 1])
 
     # Проверка на доступность GPT-токенов
         last_messages, total_spent_tokens = select_n_last_messages(user_id, COUNT_LAST_MSG)
