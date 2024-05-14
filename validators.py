@@ -47,7 +47,7 @@ def is_tts_symbol_limit(user_id, text):
     text_symbols = len(text)
 
     # Функция из БД для подсчёта всех потраченных пользователем символов
-    all_symbols = count_all_symbol(user_id)[0] + text_symbols
+    all_symbols = count_all_symbol(user_id) + text_symbols
 
     # Сравниваем all_symbols с количеством доступных пользователю символов
     if all_symbols >= MAX_USER_TTS_SYMBOLS:
