@@ -67,8 +67,22 @@ def is_stt_block_limit(user_id, duration):
 def is_tts_symbol_limit(user_id, text):
     text_symbols = len(text)
 
+    count_symbol = 0
+
+    if count_all_symbol(user_id) == int:
+        count_symbol = count_all_symbol(user_id)
+        return count_symbol
+
+    if count_all_symbol(user_id) == tuple:
+        count_symbol = count_all_symbol(user_id)[0]
+        return count_symbol
+
+    if count_all_symbol(user_id) == None:
+        count_symbol = 0
+        return count_symbol
+        
     # Функция из БД для подсчёта всех потраченных пользователем символов
-    all_symbols = count_all_symbol(user_id)[0] + text_symbols
+    all_symbols = count_symbol + text_symbols
 
     # Сравниваем all_symbols с количеством доступных пользователю символов
     if all_symbols >= MAX_USER_TTS_SYMBOLS:
