@@ -80,6 +80,14 @@ def tts(message):
         bot.register_next_step_handler(message, tts)
         return
 
+    if count_all_symbol(message.chat.id)[0] >= MAX_USER_TTS_SYMBOLS:
+        print(count_all_symbol(message.chat.id)[0])
+        msg = f"Превышен лимит токенов на пользователя в сумме {MAX_TTS_SYMBOLS} символов! Вы больше не сможете отправлять текст."
+        bot.send_message(message.chat.id, msg)
+        logging.info("У пользоваеля превышен общий лимит символов.")
+        bot.register_next_step_handler(message, tts)
+        return
+
 
     insert_row(user_id, text, len(text))
 
@@ -96,10 +104,18 @@ def tts(message):
         logging.info("Ошибка! Голосовое сообщение не отправлено.")
 
 
+
 def stt(message):
     user_id = message.from_user.id
 
+
     if not message.voice:
+        return
+
+    print(int(message.voice.duration))
+
+    stt_blocks = is_stt_block_limit(message, int(message.voice.duration))
+    if not stt_blocks:
         return
 
     file_id = message.voice.file_id
@@ -112,7 +128,7 @@ def stt(message):
     # Если статус True - отправляем текст сообщения и сохраняем в БД, иначе - сообщение об ошибке
     if status:
         # Записываем сообщение и кол-во аудиоблоков в БД
-        insert_row_stt(user_id, text, 1)
+        insert_row_stt(user_id, text, stt_blocks)
         bot.send_message(user_id, text, reply_to_message_id=message.id)
     else:
         bot.send_message(user_id, text)
@@ -123,59 +139,61 @@ def stt(message):
 
 @bot.message_handler(content_types=['voice'])
 def handle_voice(message):
+    user_id = message.from_user.id
 
-        user_id = message.from_user.id
-
-        # Проверка на максимальное количество пользователей
-        status_check_users, error_message = check_number_of_users(user_id)
-        if not status_check_users:
-            bot.send_message(user_id, error_message)
-            return
+    # Проверка на максимальное количество пользователей
+    status_check_users, error_message = check_number_of_users(user_id)
+    if not status_check_users:
+        bot.send_message(user_id, error_message)
+        return
 
     # Проверка на доступность аудиоблоков
-
+    stt_blocks = is_stt_block_limit(message.from_user.id, message.voice.duration)
+    if error_message:
+        bot.send_message(user_id, error_message)
+        return
 
     # Обработка голосового сообщения
-        file_id = message.voice.file_id
-        file_info = bot.get_file(file_id)
-        file = bot.download_file(file_info.file_path)
-        status_stt, stt_text = speech_to_text(file)
-        if not status_stt:
-            bot.send_message(user_id, stt_text)
-            return
+    file_id = message.voice.file_id
+    file_info = bot.get_file(file_id)
+    file = bot.download_file(file_info.file_path)
+    status_stt, stt_text = speech_to_text(file)
+    if not status_stt:
+        bot.send_message(user_id, stt_text)
+        return
 
     # Запись в БД
-        add_message(user_id=user_id, full_message=[stt_text, 'user', 0, 0, 1])
+    add_message(user_id=user_id, full_message=[stt_text, 'user', 0, 0, stt_blocks])
 
     # Проверка на доступность GPT-токенов
-        last_messages, total_spent_tokens = select_n_last_messages(user_id, COUNT_LAST_MSG)
-        total_gpt_tokens, error_message = is_gpt_token_limit(last_messages, total_spent_tokens)
-        if error_message:
-            bot.send_message(user_id, error_message)
-            return
+    last_messages, total_spent_tokens = select_n_last_messages(user_id, COUNT_LAST_MSG)
+    total_gpt_tokens, error_message = is_gpt_token_limit(last_messages, total_spent_tokens)
+    if error_message:
+        bot.send_message(user_id, error_message)
+        return
 
     # Запрос к GPT и обработка ответа
-        status_gpt, answer_gpt, tokens_in_answer = ask_gpt(last_messages)
-        if not status_gpt:
-            bot.send_message(user_id, answer_gpt)
-            return
-        total_gpt_tokens += tokens_in_answer
+    status_gpt, answer_gpt, tokens_in_answer = ask_gpt(last_messages)
+    if not status_gpt:
+        bot.send_message(user_id, answer_gpt)
+        return
+    total_gpt_tokens += tokens_in_answer
 
     # Проверка на лимит символов для SpeechKit
+    tts_symbols = is_tts_symbol_limit(user_id, answer_gpt)
 
     # Запись ответа GPT в БД
-        add_message(user_id=user_id, full_message=[answer_gpt, 'assistant', total_gpt_tokens, 0, 0])
+    add_message(user_id=user_id, full_message=[answer_gpt, 'assistant', total_gpt_tokens, tts_symbols, 0])
 
-        if error_message:
-            bot.send_message(user_id, error_message)
-            return
+    if error_message:
+        bot.send_message(user_id, error_message)
+        return
 
-
-        status_tts, voice_response = text_to_speech(answer_gpt)
-        if status_tts:
-            bot.send_voice(user_id, voice_response, reply_to_message_id=message.id)
-        else:
-            bot.send_message(user_id, answer_gpt, reply_to_message_id=message.id)
+    status_tts, voice_response = text_to_speech(answer_gpt)
+    if status_tts:
+        bot.send_voice(user_id, voice_response, reply_to_message_id=message.id)
+    else:
+        bot.send_message(user_id, answer_gpt, reply_to_message_id=message.id)
 
 
 
@@ -225,7 +243,6 @@ def handle_text(message):
     except Exception as e:
         logging.error(e)  # если ошибка — записываем её в логи
         bot.send_message(message.from_user.id, "Не получилось ответить. Попробуй написать другое сообщение")
-
 
 
 @bot.message_handler(func=lambda: True)
