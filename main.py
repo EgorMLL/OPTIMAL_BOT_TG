@@ -6,7 +6,9 @@ from db import prepare_db, insert_row, count_all_symbol, insert_row_stt, create_
 from speechkit import text_to_speech, speech_to_text
 from telebot.types import ReplyKeyboardMarkup
 from yandex_gpt import ask_gpt
-
+import schedule
+import time
+from threading import Thread
 
 API_TOKEN = TOKEN
 bot = telebot.TeleBot(get_bot_token())
