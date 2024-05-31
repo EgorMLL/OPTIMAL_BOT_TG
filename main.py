@@ -44,7 +44,9 @@ def help(message):
     bot.send_message(message.from_user.id, "/debug - откладка об ошибках\n"
                                            "/tts - перевод текста в аудио\n"
                                            "/stt - перевод аудио в текст\n"
-                                           "/start - начало общения с ботом")
+                                           "/start - начало общения с ботом\n"
+                                           "/update_info - информация об обновлениях бота\n"
+                                           "/talk_with_me - при запуске данной функции юот каждые 10 часов будет напоминать что соскучился по вам :>")
 
 @bot.message_handler(commands=['tts'])
 def tts_handler(message):
@@ -59,7 +61,30 @@ def stt_handler(message):
     bot.register_next_step_handler(message, stt)
 
 
+def say_hello(message):  # Функция, которая будет выполняться по расписанию
+    user_id = message.from_user.id  # Идентификатор пользователя, которому отправляем сообщение. Замени на свой
+    bot.send_message(user_id, "Что то мы давно не общались( Я соскучился((")
 
+def schedule_runner(): # Функция, которая запускает бесконечный цикл с расписанием
+    while True: # Уже знакомый тебе цикл
+        schedule.run_pending()
+        time.sleep(1)
+
+@bot.message_handler(commands=['talk_with_me'])
+def Tsdhread(message):
+    bot.send_message(message.chat.id, "Теперь бот каждые 10 часов будет напоминать вам что вы давно с ним не общались :)")
+    schedule.every(10).hour.do(say_hello, message = message) # say_hello будет выполняться каждые 10 секунд
+    Thread(target = schedule_runner).start()
+
+
+@bot.message_handler(commands=['update_info'])
+def update(message):
+    bot.send_message(message.chat.id, '------ Меню обновлений бота ------\n'
+                                           'Релиз 1.0 - тестовый релиз бота 10.05.2024\n'
+                                           'Обновление 1.1 - исправление всех недочётов и ошибок при релизе бота, обновление базы данных 17.05.2024\n'
+                                           'Обновление 1.2 (глобальное) - добавление функции проверок на лимит токенов при запросе в нейросеть, добавление проверок на кол - во блоков (аудио сообщений), исправление ошибок 30.05.2024\n'
+                                           'Обновление 1.2.1 - добавление функции про информацию об обновлениях бота /update_info, добавление функции /talk_with_me, для напоминае про общение с ботом 31.05.24\n'
+                                           'Информация про последующие обновления появится ниже :>')
 
 
 def tts(message):
